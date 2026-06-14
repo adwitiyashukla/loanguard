@@ -1,0 +1,183 @@
+# LoanGuard configuration
+# Override any value via env var: LG__<SECTION>__<KEY>=value
+
+project:
+  name: loanguard
+  version: 0.1.0
+  random_seed: 42
+
+paths:
+  data_raw: data/raw
+  data_processed: data/processed
+  data_external: data/external
+  artifacts: artifacts
+  mlflow_uri: file:./mlruns
+
+data:
+  source: lendingclub
+  # Laptop-friendly default so a full training run finishes in ~5-10 min.
+  # Bump to 250000+ (or null for the full ~2.2M dataset) once you have the
+  # real LendingClub CSV and more compute.
+  raw_filename: accepted_2007_to_2018Q4.csv
+  sample_size: 50000  # null = use full dataset
+  target_col: is_fraud
+  date_col: issue_d
+  id_col: id
+  test_size: 0.15
+  val_size: 0.15
+  split_strategy: time  # or 'random'
+
+labels:
+  # Weak-supervision policy for fraud
+  policy: weak_supervision
+  rules:
+    first_payment_default:
+      enabled: true
+      # loans that default within first 90 days of disbursement
+      max_days_to_default: 90
+    income_anomaly:
+      enabled: true
+      # annual_inc above 99.5th pct AND no employment length
+      annual_inc_quantile: 0.995
+    debt_inconsistency:
+      enabled: true
+      # dti > 60 AND annual_inc > 500k
+      dti_threshold: 60
+      annual_inc_threshold: 500000
+    address_anomaly:
+      enabled: true
+      # zip_code shared by > N high-default applicants
+      shared_zip_threshold: 25
+
+features:
+  numeric:
+    - loan_amnt
+    - int_rate
+    - installment
+    - annual_inc
+    - dti
+    - delinq_2yrs
+    - inq_last_6mths
+    - open_acc
+    - pub_rec
+    - revol_bal
+    - revol_util
+    - total_acc
+    - mort_acc
+    - pub_rec_bankruptcies
+  categorical:
+    - term
+    - grade
+    - sub_grade
+    - emp_length
+    - home_ownership
+    - verification_status
+    - purpose
+    - addr_state
+  text:
+    - title
+    - emp_title
+  high_cardinality_encoding: woe  # or 'target', 'frequency'
+  winsorize_quantiles: [0.005, 0.995]
+
+models:
+  # Supervised
+  xgboost:
+    enabled: true
+    params:
+      objective: binary:logistic
+      eval_metric: aucpr
+      tree_method: hist
+      max_depth: 6
+      learning_rate: 0.05
+      n_estimators: 800
+      subsample: 0.8
+      colsample_bytree: 0.8
+      min_child_weight: 10
+      reg_lambda: 1.0
+      scale_pos_weight: null  # computed at runtime
+    monotonic_constraints:
+      grade: 1
+      sub_grade: 1
+      int_rate: 1
+      delinq_2yrs: 1
+      pub_rec: 1
+      pub_rec_bankruptcies: 1
+
+  lightgbm:
+    enabled: true
+    params:
+      objective: binary
+      metric: average_precision
+      num_leaves: 63
+      learning_rate: 0.05
+      n_estimators: 800
+      feature_fraction: 0.8
+      bagging_fraction: 0.8
+      bagging_freq: 5
+      min_data_in_leaf: 50
+      lambda_l2: 1.0
+
+  catboost:
+    enabled: true
+    params:
+      loss_function: Logloss
+      eval_metric: PRAUC
+      iterations: 800
+      depth: 6
+      learning_rate: 0.05
+      l2_leaf_reg: 3.0
+      auto_class_weights: Balanced
+
+  # Unsupervised
+  isolation_forest:
+    enabled: true
+    params:
+      n_estimators: 200
+      contamination: 0.02
+      max_samples: 0.5
+
+  autoencoder:
+    enabled: true
+    params:
+      encoder_dims: [128, 64, 32]
+      decoder_dims: [64, 128]
+      dropout: 0.2
+      batch_size: 512
+      epochs: 15  # bump to 30+ for the full-data run
+      learning_rate: 1.0e-3
+      early_stopping_patience: 5
+
+  ensemble:
+    enabled: true
+    method: stacking  # or 'simple_avg', 'rank_avg'
+    meta_learner: logistic_regression
+    calibration: isotonic
+
+training:
+  cv_folds: 5
+  cv_strategy: stratified_time  # respects time order
+  optuna:
+    enabled: false  # set true for full HPO run
+    n_trials: 50
+    timeout_seconds: 3600
+  class_weight: balanced
+  sampling: none  # or 'smote', 'undersample'
+
+evaluation:
+  primary_metric: pr_auc
+  secondary_metrics: [roc_auc, ks, brier, recall_at_fpr_5pct]
+  cost_matrix:
+    false_negative: 100000  # rupees lost per missed fraud
+    false_positive: 1500    # rupees of review cost per false alarm
+    true_positive: 0
+    true_negative: 0
+
+monitoring:
+  drift:
+    enabled: true
+    reference_window_days: 90
+    psi_alert_threshold: 0.2
+  prometheus:
+    enabled: true
+    namespace: loanguard

@@ -1,0 +1,58 @@
+services:
+
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: loanguard:latest
+    container_name: loanguard-api
+    ports:
+      - "8000:8000"
+    environment:
+      - LG__PATHS__MLFLOW_URI=http://mlflow:5000
+    volumes:
+      - ../artifacts:/app/artifacts:ro
+    depends_on:
+      - mlflow
+    restart: unless-stopped
+
+  dashboard:
+    image: loanguard:latest
+    container_name: loanguard-dashboard
+    command: ["streamlit", "run", "src/dashboard/app.py", "--server.address=0.0.0.0", "--server.port=8501"]
+    ports:
+      - "8501:8501"
+    volumes:
+      - ../artifacts:/app/artifacts:ro
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.10.2
+    container_name: loanguard-mlflow
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow-data:/mlflow
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri sqlite:////mlflow/mlflow.db
+      --default-artifact-root /mlflow/artifacts
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: loanguard-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  mlflow-data:
