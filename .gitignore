@@ -31,11 +31,14 @@ data/external/*
 !data/external/.gitkeep
 
 # Models and artifacts
-artifacts/
+# NOTE: we DO commit artifacts/ so HuggingFace Spaces (and anyone who
+# clones the repo) can load the trained model without re-running training.
+# Comment the next two lines back in if you want to keep artifacts local-only.
+# artifacts/
+# *.joblib
 mlruns/
 mlartifacts/
 *.pkl
-*.joblib
 *.pt
 *.onnx
 

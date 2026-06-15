@@ -1,3 +1,15 @@
+---
+title: LoanGuard
+emoji: 🛡️
+colorFrom: blue
+colorTo: green
+sdk: streamlit
+sdk_version: "1.31.0"
+app_file: app.py
+pinned: false
+license: mit
+---
+
 # LoanGuard: Loan Application Fraud Detection
 
 > An end-to-end machine learning system for detecting fraudulent loan applications, built with the rigor expected of a regulated lending institution.
