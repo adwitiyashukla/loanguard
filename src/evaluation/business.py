@@ -2,7 +2,7 @@
 
 A fraud model's AUC is interesting; its expected net loss avoidance is
 what the business will be measured on. This module converts model
-outputs into rupees using a cost matrix.
+outputs into dollars using a cost matrix.
 """
 
 from __future__ import annotations
@@ -15,9 +15,9 @@ import pandas as pd
 
 @dataclass
 class CostMatrix:
-    false_negative: float = 100_000.0  # missed fraud — average loss
-    false_positive: float = 1_500.0    # cost of manual review for a clean app
-    true_positive: float = 0.0          # caught fraud — model wins
+    false_negative: float = 1_200.0  # missed fraud — average loss (USD)
+    false_positive: float = 20.0     # cost of manual review for a clean app (USD)
+    true_positive: float = 0.0       # caught fraud — model wins
     true_negative: float = 0.0
 
 
@@ -76,13 +76,13 @@ def expected_loss_avoidance(
     y_true: np.ndarray,
     y_proba: np.ndarray,
     threshold: float,
-    avg_fraud_loss: float = 100_000.0,
-    review_cost: float = 1_500.0,
+    avg_fraud_loss: float = 1_200.0,
+    review_cost: float = 20.0,
     baseline_recall: float = 0.0,
 ) -> dict[str, float]:
     """Compare model decisions against a do-nothing baseline.
 
-    Returns net loss avoided in rupees.
+    Returns net loss avoided in dollars.
     """
     y_true = np.asarray(y_true).astype(int)
     y_proba = np.asarray(y_proba).astype(float)

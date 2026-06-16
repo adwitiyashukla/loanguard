@@ -131,12 +131,12 @@ elif view == "Application Triage":
 
     with st.form("application_form", clear_on_submit=False):
         col1, col2, col3 = st.columns(3)
-        loan_amnt = col1.number_input("Loan amount (₹)", 1000.0, 50000.0, 15000.0, step=500.0)
+        loan_amnt = col1.number_input("Loan amount ($)", 1000.0, 50000.0, 15000.0, step=500.0)
         term = col2.selectbox("Term (months)", [36, 60])
         int_rate = col3.number_input("Interest rate (%)", 5.0, 35.0, 13.0, step=0.1)
 
         col1, col2, col3 = st.columns(3)
-        annual_inc = col1.number_input("Annual income (₹)", 5_000.0, 5_000_000.0, 60_000.0, step=1000.0)
+        annual_inc = col1.number_input("Annual income ($)", 5_000.0, 5_000_000.0, 60_000.0, step=1000.0)
         dti = col2.number_input("DTI", 0.0, 100.0, 18.0, step=0.5)
         emp_length = col3.number_input("Employment length (yrs)", 0.0, 10.0, 4.0, step=1.0)
 

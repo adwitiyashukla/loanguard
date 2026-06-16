@@ -31,10 +31,10 @@ Key columns we keep:
 
 ## Known biases / caveats
 
-- **US consumer P2P loans, not Indian SME loans.** Domain transfer requires care: DTI, credit-bureau coverage, and income verification all differ.
+- **US consumer P2P loans, not a generic loan dataset.** Transferring this work to other markets requires care: DTI conventions, credit-bureau coverage, and income-verification standards differ by country and lender.
 - **Stated income** — `annual_inc` is borrower-reported. The `verification_status` flag indicates whether LendingClub verified it; "Not Verified" rows are an obvious fraud-risk slice.
 - **Pre-2014 vs. post-2014** — LendingClub tightened underwriting in 2014; the loss distributions are different across periods. Time-split respects this.
-- **No protected-class attributes** — no gender, race/caste, religion. Fairness analysis runs against legitimate proxies only.
+- **No protected-class attributes** — no gender, race, religion. Fairness analysis runs against legitimate proxies only.
 - **Survivorship** — the dataset is *accepted* loans only; declined applicants aren't included. Fraud models trained only on accepted data will under-fit the upper tail of the score distribution.
 
 ## Versioning

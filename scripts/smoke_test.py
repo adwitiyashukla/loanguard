@@ -141,7 +141,7 @@ def main() -> None:
         cost_df = cost_sensitive_evaluation(y_test, proba, CostMatrix())
         best = cost_df.loc[cost_df["total_cost"].idxmin()]
         print(f"   optimal threshold = {best['threshold']:.2f}, "
-              f"cost/applicant = ₹{best['cost_per_applicant']:.2f}")
+              f"cost/applicant = ${best['cost_per_applicant']:.2f}")
     except Exception as e:
         fail("Cost evaluation broke", e)
 

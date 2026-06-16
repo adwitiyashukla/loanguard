@@ -10,7 +10,7 @@ On a young unsecured SME or consumer book, the single biggest controllable line 
 
 ## 2. Why LendingClub data?
 
-There is no public, large-scale, real Indian SME-lending dataset. LendingClub is the closest analog publicly available: unsecured consumer/SME loans, full application-time fields, ~2.2M rows. The transfer of feature ideas (DTI, credit history length, employment verification) to an Indian SME book is direct. I documented this explicitly to avoid claiming we're modelling Indian SME fraud directly.
+LendingClub is the largest publicly available real loan-application dataset — unsecured consumer / SME loans, full application-time fields, ~2.2M rows. The features and modelling decisions (DTI, credit history length, employment verification, monotonic constraints on bureau attributes) transfer cleanly to any unsecured-lending market. I documented this explicitly so the dataset's actual scope (US 2007–2018 P2P loans) is never overstated.
 
 ## 3. Why weak supervision for the fraud label?
 
@@ -24,7 +24,7 @@ The weak-supervision policy is transparent, lives in config, and is the same sca
 
 ## 4. Why monotonic constraints on credit-bureau features?
 
-Risk score must move *with* delinquency count, public records, and grade. Without monotonic constraints, the model can learn locally non-monotonic relationships that — while higher AUC on the training set — fail audit and customer dispute resolution under RBI's Fair Practices Code. Forcing monotonicity costs ~0.5pp AUC but is non-negotiable for a regulated product.
+Risk score must move *with* delinquency count, public records, and grade. Without monotonic constraints, the model can learn locally non-monotonic relationships that — while higher AUC on the training set — fail audit and customer dispute resolution under ECOA / Regulation B (the US fair-lending rule that requires lenders to explain adverse actions to applicants). Forcing monotonicity costs ~0.5pp AUC but is non-negotiable for a regulated product.
 
 ## 5. Why a stacking ensemble instead of a single XGBoost?
 
@@ -49,7 +49,7 @@ Most application fraud is ring fraud: a single bad actor pushes 30–50 syntheti
 
 ## 9. Why cost-sensitive thresholding?
 
-A 0.5 threshold is almost never the right answer. The cost matrix (₹100k per missed fraud vs ₹1.5k per false alarm, derived from Indian lending benchmarks) means the optimal threshold is much lower than 0.5 — we'd rather over-flag and let humans review than miss a fraud. The threshold is recomputed each training run and lives in the artifacts.
+A 0.5 threshold is almost never the right answer. The cost matrix ($1,200 per missed fraud vs $20 per false alarm, derived from US unsecured-lending benchmarks) means the optimal threshold is much lower than 0.5 — we'd rather over-flag and let humans review than miss a fraud. The threshold is recomputed each training run and lives in the artifacts.
 
 ## 10. Why SHAP and not LIME?
 

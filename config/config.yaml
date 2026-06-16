@@ -168,8 +168,8 @@ evaluation:
   primary_metric: pr_auc
   secondary_metrics: [roc_auc, ks, brier, recall_at_fpr_5pct]
   cost_matrix:
-    false_negative: 100000  # rupees lost per missed fraud
-    false_positive: 1500    # rupees of review cost per false alarm
+    false_negative: 1200  # USD lost per missed fraud (US unsecured-lending benchmark)
+    false_positive: 20    # USD of review cost per false alarm
     true_positive: 0
     true_negative: 0
 

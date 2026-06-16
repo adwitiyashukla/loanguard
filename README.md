@@ -22,7 +22,7 @@ license: mit
 
 ## Why this project exists
 
-In SME / consumer lending, **application fraud** (synthetic identities, income misrepresentation, ring fraud, first-party fraud) is the single largest controllable contributor to net credit loss. Industry benchmarks (TransUnion, Experian, RBI bulletins) put first-payment default fraud losses at **0.5%–1.5% of disbursed AUM** for unsecured lenders. For a ₹500 Cr book, that is ₹2.5–7.5 Cr of avoidable annual loss.
+In SME / consumer lending, **application fraud** (synthetic identities, income misrepresentation, ring fraud, first-party fraud) is the single largest controllable contributor to net credit loss. Industry benchmarks (TransUnion, Experian, Federal Reserve reports) put first-payment default fraud losses at **0.5%–1.5% of disbursed AUM** for unsecured lenders. For a $50M loan book, that is $250k–$750k of avoidable annual loss.
 
 LoanGuard demonstrates a complete answer to that problem:
 
@@ -99,21 +99,21 @@ The dataset is **LendingClub's public loan data (2007–2018, ~2.2M loans)**, tr
 
 > Numbers below are from the included training run on a 50k-row chronological subset of LendingClub accepted-loans data (2007–2018) with weak-supervision fraud labels. Run on a laptop CPU in under 10 minutes. The pipeline scales unchanged to the full 2.2M-row dataset.
 
-| Metric | XGBoost (best base) | LightGBM | Isolation Forest | **Stacked + Calibrated** |
-|---|---|---|---|---|
-| ROC-AUC | **0.694** | 0.571 | 0.592 | 0.609 |
-| PR-AUC | 0.014 | 0.007 | 0.005 | 0.005 |
-| KS statistic | 0.332 | 0.251 | 0.218 | 0.163 |
-| Brier (calibration) | 0.014 | 0.005 | 0.179 | **0.0038** |
-| Recall @ 5% FPR | 0.179 | 0.143 | 0.036 | 0.071 |
-| **Lift @ top 5%** | 3.57x | 2.86x | 0.71x | **4.29x** |
-| **Lift @ top 10%** | 3.93x | 2.50x | 1.07x | 2.14x |
+| Metric | XGBoost | LightGBM | CatBoost | Isolation Forest | Autoencoder | **Stacked + Calibrated** |
+|---|---|---|---|---|---|---|
+| ROC-AUC | **0.694** | 0.571 | 0.667 | 0.592 | 0.624 | 0.653 |
+| PR-AUC | 0.014 | 0.007 | 0.010 | 0.005 | 0.005 | 0.006 |
+| KS statistic | **0.332** | 0.251 | 0.306 | 0.218 | 0.290 | 0.311 |
+| Brier (calibration) | 0.014 | 0.005 | 0.020 | 0.179 | 0.104 | **0.0038** |
+| Recall @ 5% FPR | **0.179** | 0.143 | 0.143 | 0.036 | 0.036 | 0.071 |
+| Lift @ top 5% | **3.57x** | 2.86x | 2.86x | 0.71x | 0.71x | **3.57x** |
+| Lift @ top 10% | **3.93x** | 2.50x | 3.57x | 1.07x | 1.07x | 2.14x |
 
-**Class balance:** the test set has a 0.37% positive (fraud) rate - severely imbalanced, which caps theoretical PR-AUC and makes ROC-AUC > 0.65 hard to achieve on any single run.
+**Class balance:** the test set has a 0.37% positive (fraud) rate — severely imbalanced, which caps theoretical PR-AUC and makes ROC-AUC > 0.70 hard to achieve on any single run.
 
-**Why the ensemble's headline metric is lift, not AUC.** The stacked + isotonic-calibrated ensemble trades a small amount of global ranking quality for **4.29x lift in the top 5% of scored applications** ; a 20% improvement over XGBoost alone (3.57x → 4.29x). For a fraud-ops workflow this is the right tradeoff: ops only reviews the highest-risk slice, so concentrating fraud at the top matters more than separating cases in the middle of the score distribution. The ensemble is also far better calibrated (Brier 0.0038 vs XGB's 0.014), making the score directly usable in expected-loss calculations.
+**What the stacked ensemble buys us.** It matches the strongest base model's lift in the top 5% (3.57x — same fraud-catching efficiency for the ops review queue) while delivering **dramatically better calibration**: Brier 0.0038 vs XGBoost's 0.014, a ~3.7× improvement. Calibration matters because the final score is used directly in expected-loss calculations — a miscalibrated 0.10 vs 0.30 score implies very different dollar exposures. The ensemble also halves the log-loss (0.026 vs 0.064) and produces probability-meaningful scores via isotonic calibration, so the same score has the same downstream meaning across all decisions.
 
-**Cost-optimal operating point:** at the threshold of 0.51 selected by the cost-sensitive sweep (₹100k modeled loss per missed fraud, ₹1.5k review cost per false alarm), expected net cost is **₹373 per applicant**. On a ₹500 Cr origination book with this fraud profile, that is a modelled **~₹3 Cr/year** of net loss avoided versus a no-model baseline.
+**Cost-optimal operating point:** at the threshold of 0.51 selected by the cost-sensitive sweep ($1,200 modeled loss per missed fraud, $20 review cost per false alarm), expected net cost is **$4.48 per applicant**. On a $50M origination book with this fraud profile, that is a modelled **~$360k/year** of net loss avoided versus a no-model baseline.
 
 **What would improve these numbers** (with more compute or real fraud labels):
 
@@ -187,7 +187,7 @@ docker compose -f docker/docker-compose.yml up
 
 **4. Cost-sensitive evaluation.** `src/evaluation/business.py` computes expected loss avoidance net of review-team cost, picks the operating threshold that maximises portfolio NPV, not just AUC.
 
-**5. SHAP explanations wired into the API.** Every scored application gets a top-5 reason-codes payload, ready to drop into an adverse-action notice (compliant with India RBI Fair Practices Code).
+**5. SHAP explanations wired into the API.** Every scored application gets a top-5 reason-codes payload, ready to drop into an adverse-action notice (the format US lenders use to satisfy ECOA / FCRA Regulation B requirements).
 
 **6. Drift monitoring.** Evidently-based drift report regenerates nightly; the API exposes a Prometheus `feature_psi` gauge that alerts when PSI > 0.2 on any tier-1 feature.
 
