@@ -57,7 +57,7 @@ class XGBFraudModel(FraudModel):
         # Build monotonic constraint vector aligned with X columns
         monotone = self._build_monotone_vector(list(X.columns))
 
-        # Don't mutate self.params — make a working copy
+        # Don't mutate self.params - make a working copy
         params = {**self.params}
         scale = params.pop("scale_pos_weight", None)
         if scale is None and y.mean() > 0:

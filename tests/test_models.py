@@ -1,4 +1,4 @@
-"""Tests for fraud models — make sure each fits and predicts."""
+"""Tests for fraud models - make sure each fits and predicts."""
 
 from __future__ import annotations
 

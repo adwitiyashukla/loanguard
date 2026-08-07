@@ -1,6 +1,6 @@
 """Time-aware and stratified data splitters.
 
-Out-of-time validation is essential for credit / fraud models — random
+Out-of-time validation is essential for credit / fraud models - random
 splits hugely overestimate generalisation because borrower behaviour
 drifts and macro conditions change. We default to time-based splits
 and use stratified random only for unit tests.
@@ -61,7 +61,7 @@ def stratified_split(
     test_size: float = 0.15,
     random_seed: int = 42,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """Stratified random split — fallback when timestamps aren't available."""
+    """Stratified random split - fallback when timestamps aren't available."""
     train_val, test = train_test_split(
         df, test_size=test_size, stratify=df[target_col], random_state=random_seed
     )

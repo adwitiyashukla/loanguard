@@ -1,4 +1,4 @@
-"""FastAPI application — real-time + batch scoring with Prometheus metrics."""
+"""FastAPI application - real-time + batch scoring with Prometheus metrics."""
 
 from __future__ import annotations
 

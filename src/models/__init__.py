@@ -1,4 +1,4 @@
-"""Model implementations — all share a common base class."""
+"""Model implementations - all share a common base class."""
 
 from .base import FraudModel
 from .xgb_model import XGBFraudModel

@@ -1,6 +1,6 @@
 """Weak-supervision fraud labelling.
 
-LendingClub doesn't ship explicit 'fraud' labels — nor does any real
+LendingClub doesn't ship explicit 'fraud' labels - nor does any real
 lender during their first year of operations. This module implements a
 defensible weak-supervision policy that combines four signals:
 
@@ -124,7 +124,7 @@ def build_fraud_labels(df: pd.DataFrame, cfg: LabelConfig | None = None) -> pd.D
 
     rate = df["is_fraud"].mean()
     log.info(
-        f"Fraud labelling complete — positive rate {rate:.2%} "
+        f"Fraud labelling complete - positive rate {rate:.2%} "
         f"(FPD={df['rule_fpd'].mean():.2%}, "
         f"anomaly>=2={(df['n_anomalies'] >= 2).mean():.2%})"
     )

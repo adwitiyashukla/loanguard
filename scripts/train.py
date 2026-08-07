@@ -34,7 +34,7 @@ def main(config_path: str, log_level: str) -> None:
         for k, v in results["ensemble"].items():
             click.echo(f"  {k:30s}  {v}")
     else:
-        click.echo("  (ensemble not trained — only base models)")
+        click.echo("  (ensemble not trained - only base models)")
 
 
 if __name__ == "__main__":

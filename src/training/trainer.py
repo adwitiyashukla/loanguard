@@ -125,7 +125,7 @@ class Trainer:
                 m.fit(X_train, y_train, eval_set=[(X_val, y_val)])
                 self.base_models_["catboost"] = m
             except ImportError:
-                log.warning("CatBoost not installed — skipping.")
+                log.warning("CatBoost not installed - skipping.")
         if mcfg["isolation_forest"]["enabled"]:
             m = IsolationForestFraudModel(params=mcfg["isolation_forest"]["params"])
             m.fit(X_train)
@@ -197,7 +197,7 @@ class Trainer:
             log.warning(f"Could not build drift monitor: {exc}")
 
         if _MLFLOW and mlflow is not None:
-            # MLflow logging is optional — never let it crash training.
+            # MLflow logging is optional - never let it crash training.
             # Newer MLflow versions deprecated the file-store backend and
             # raise on use; we opt in via env var, and still wrap in
             # try/except so any other MLflow problem can't lose artifacts.

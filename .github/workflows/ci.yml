@@ -1,7 +1,7 @@
 name: CI
 
 # Runs on every push/PR to main. Two lightweight jobs that verify the
-# project actually works end-to-end — they don't enforce strict style
+# project actually works end-to-end - they don't enforce strict style
 # rules (that's what pre-commit is for locally).
 
 on:

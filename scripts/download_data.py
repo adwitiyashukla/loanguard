@@ -34,7 +34,7 @@ def main(out_dir: str, sample: int | None) -> None:
     if shutil.which("kaggle") is None:
         log.warning(
             "kaggle CLI not found. Install with `pip install kaggle` and place "
-            "your kaggle.json in ~/.kaggle/. Skipping download — the loader "
+            "your kaggle.json in ~/.kaggle/. Skipping download - the loader "
             "will fall back to the synthetic generator."
         )
         return

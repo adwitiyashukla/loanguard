@@ -1,4 +1,4 @@
-"""Top-level FeatureBuilder — orchestrates the whole pipeline.
+"""Top-level FeatureBuilder - orchestrates the whole pipeline.
 
 Designed to be:
   - Stateful: fit/transform separation (no leakage)
@@ -119,7 +119,7 @@ class FeatureBuilder(BaseEstimator, TransformerMixin):
         self.feature_names_ = feat_names
 
         self.fitted_ = True
-        log.info(f"FeatureBuilder ready — {len(feat_names)} features")
+        log.info(f"FeatureBuilder ready - {len(feat_names)} features")
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -160,7 +160,7 @@ class FeatureBuilder(BaseEstimator, TransformerMixin):
         This is critical: ``build_velocity_features`` sorts by date and
         ``build_graph_features`` resets the index. Without restoring the
         original order here, the engineered features would come back in a
-        different row order than the labels ``y`` — silently misaligning
+        different row order than the labels ``y`` - silently misaligning
         X and y and destroying model performance.
         """
         original_index = X.index

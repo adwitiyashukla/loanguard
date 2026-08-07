@@ -1,4 +1,4 @@
-"""Velocity features — count of applications in a rolling window.
+"""Velocity features - count of applications in a rolling window.
 
 Fraud rings hit lenders in bursts. A genuine applicant from a zip
 might appear once every few months; a synthetic-identity ring will
@@ -31,7 +31,7 @@ def build_velocity_features(
     These are leakage-safe because we only look backwards.
     """
     if date_col not in df.columns:
-        log.warning(f"{date_col} not in df — skipping velocity features")
+        log.warning(f"{date_col} not in df - skipping velocity features")
         return df.copy()
 
     df = df.copy()

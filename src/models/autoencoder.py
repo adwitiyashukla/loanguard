@@ -2,7 +2,7 @@
 
 We train a denoising autoencoder on (mostly) clean applications.
 At inference time, applications with high reconstruction error are
-flagged — including novel fraud patterns the supervised models
+flagged - including novel fraud patterns the supervised models
 weren't trained on.
 
 Loss surface is intentionally simple: MSE on normalised features.
@@ -74,7 +74,7 @@ class AutoencoderFraudModel(FraudModel):
         self._trained = False
 
     def fit(self, X: pd.DataFrame, y: pd.Series | None = None, **kwargs) -> "AutoencoderFraudModel":
-        # If labels available, train only on negatives ("clean" data) — semi-supervised.
+        # If labels available, train only on negatives ("clean" data) - semi-supervised.
         if y is not None:
             mask = y.values == 0
             X_train = X.loc[mask]

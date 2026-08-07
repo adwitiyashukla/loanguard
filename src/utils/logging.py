@@ -1,6 +1,6 @@
 """Structured logging using loguru.
 
-The whole project goes through this module — never call print().
+The whole project goes through this module - never call print().
 """
 
 from __future__ import annotations

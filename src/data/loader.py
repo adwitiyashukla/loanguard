@@ -6,7 +6,7 @@ and richness to a real lender's book. We treat its 'accepted loans' CSV
 
 If the raw CSV isn't available locally, the loader falls back to a
 deterministic synthetic generator that produces statistically similar
-data — used in CI and for quickstart demos.
+data - used in CI and for quickstart demos.
 """
 
 from __future__ import annotations
@@ -55,7 +55,7 @@ APPLICATION_TIME_COLUMNS: list[str] = [
     "total_acc",
     "mort_acc",
     "pub_rec_bankruptcies",
-    # Outcome columns — used only for label construction, then dropped:
+    # Outcome columns - used only for label construction, then dropped:
     "loan_status",
     "last_pymnt_d",
 ]
@@ -73,7 +73,7 @@ class LendingClubLoader:
         raw_path = Path(self.raw_path)
         if not raw_path.exists():
             log.warning(
-                f"Raw file not found at {raw_path} — falling back to synthetic generator. "
+                f"Raw file not found at {raw_path} - falling back to synthetic generator. "
                 "Run scripts/download_data.py for real data."
             )
             return self._synthetic(n=self.sample_size or 50_000, seed=self.random_seed)
@@ -142,7 +142,7 @@ class LendingClubLoader:
         return float(digits) if digits else np.nan
 
     # ------------------------------------------------------------------ #
-    # Synthetic fallback — used for CI and quick demos
+    # Synthetic fallback - used for CI and quick demos
     # ------------------------------------------------------------------ #
 
     @staticmethod
@@ -293,7 +293,7 @@ def load_raw(
     sample_size: int | None = None,
     random_seed: int = 42,
 ) -> pd.DataFrame:
-    """Convenience function — instantiate loader and return DataFrame."""
+    """Convenience function - instantiate loader and return DataFrame."""
     return LendingClubLoader(
         raw_path=raw_path, sample_size=sample_size, random_seed=random_seed
     ).load()

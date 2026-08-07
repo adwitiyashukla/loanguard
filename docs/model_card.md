@@ -1,4 +1,4 @@
-# Model Card — LoanGuard Fraud Detection v0.1.0
+# Model Card - LoanGuard Fraud Detection v0.1.0
 
 Following [Mitchell et al. 2019](https://arxiv.org/abs/1810.03993) format.
 
@@ -38,7 +38,7 @@ Operating threshold (review): 0.30; operating threshold (decline): 0.70.
 ## Training data
 
 - **Source**: LendingClub accepted-loans CSV (2007–2018), ~2.2M rows.
-- **Label**: weak-supervision (FPD ∩ anomaly rules) — see `src/data/labels.py`.
+- **Label**: weak-supervision (FPD ∩ anomaly rules) - see `src/data/labels.py`.
 - **Sample**: 250k chronological-ordered rows (configurable).
 
 ## Evaluation data
@@ -53,6 +53,6 @@ Operating threshold (review): 0.30; operating threshold (decline): 0.70.
 
 ## Caveats and recommendations
 
-- Labels are weak-supervised — performance numbers are upper bounds. Retrain on confirmed-fraud labels once available.
+- Labels are weak-supervised - performance numbers are upper bounds. Retrain on confirmed-fraud labels once available.
 - Velocity and graph features are computed from training history at score time; in a deployed system, replace with a streaming feature store.
 - Re-evaluate quarterly; trigger retraining when PSI > 0.25 on any tier-1 feature or AUC degrades by >3pp.

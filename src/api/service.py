@@ -1,4 +1,4 @@
-"""Scoring service — wraps the trained model + builder + explainer."""
+"""Scoring service - wraps the trained model + builder + explainer."""
 
 from __future__ import annotations
 
@@ -41,7 +41,7 @@ class ScoringService:
     def load(self) -> None:
         if not self.artifacts_dir.exists():
             log.warning(
-                f"Artifacts dir {self.artifacts_dir} not found. Service starts empty — "
+                f"Artifacts dir {self.artifacts_dir} not found. Service starts empty - "
                 "call /reload after training."
             )
             return
@@ -93,7 +93,7 @@ class ScoringService:
             if c in df.columns:
                 df[c] = pd.to_datetime(df[c], errors="coerce")
         if "issue_d" not in df.columns or df["issue_d"].isna().all():
-            # tz-naive "now" — issue_d only drives seasonality/velocity features
+            # tz-naive "now" - issue_d only drives seasonality/velocity features
             df["issue_d"] = pd.Timestamp.now()
 
         X = self.builder.transform(df)

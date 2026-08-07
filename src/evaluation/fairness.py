@@ -2,7 +2,7 @@
 
 We don't have protected attributes (gender/caste/religion) in the
 LendingClub data. But we can still check fairness across legitimate
-proxies like addr_state and home_ownership — and the same machinery
+proxies like addr_state and home_ownership - and the same machinery
 is what you'd use in production with an actual protected-class column.
 """
 

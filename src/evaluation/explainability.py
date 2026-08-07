@@ -81,7 +81,7 @@ class ShapExplainer:
         )
 
     # ------------------------------------------------------------------ #
-    # Local explanation — used by the API for adverse-action notice
+    # Local explanation - used by the API for adverse-action notice
     # ------------------------------------------------------------------ #
 
     def explain_one(self, x: pd.DataFrame, top_k: int = 5) -> list[Explanation]:

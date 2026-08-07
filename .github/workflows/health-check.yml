@@ -6,7 +6,7 @@ name: HuggingFace Space Health Check
 # hours instead of finding out because a recruiter tells you.
 #
 # Cost: ~30 seconds per run × 4 runs/day × 30 days = ~60 minutes/month
-# of GitHub Actions time — well under the free tier's 2000 min/month.
+# of GitHub Actions time - well under the free tier's 2000 min/month.
 
 on:
   schedule:
@@ -31,7 +31,7 @@ jobs:
           # "RUNNING" is the only healthy state. Anything else (RUNTIME_ERROR,
           # BUILD_ERROR, NO_APP_FILE, SLEEPING, PAUSED) counts as unhealthy.
           if echo "$STATUS" | grep -q "RUNNING"; then
-            echo "✅ Space is Running — all good."
+            echo "✅ Space is Running - all good."
             exit 0
           else
             echo "❌ Space is not Running. Investigation needed."

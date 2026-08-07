@@ -1,13 +1,13 @@
-# LoanGuard — Architecture
+# LoanGuard - Architecture
 
 ## System overview
 
 LoanGuard is split into four loosely-coupled subsystems:
 
-1. **Offline training pipeline** — reads raw data, builds features, trains models, registers artifacts in MLflow.
-2. **Online scoring service (FastAPI)** — loads the latest model from the registry, exposes `/score` and `/score/batch`.
-3. **Risk analyst dashboard (Streamlit)** — interactive triage and portfolio diagnostics.
-4. **Monitoring (Evidently + Prometheus)** — drift detection on input features and predicted score distribution.
+1. **Offline training pipeline** - reads raw data, builds features, trains models, registers artifacts in MLflow.
+2. **Online scoring service (FastAPI)** - loads the latest model from the registry, exposes `/score` and `/score/batch`.
+3. **Risk analyst dashboard (Streamlit)** - interactive triage and portfolio diagnostics.
+4. **Monitoring (Evidently + Prometheus)** - drift detection on input features and predicted score distribution.
 
 Every subsystem can be deployed independently. The dashboard talks to the API; the API and dashboard share the artifact directory (read-only).
 
@@ -39,14 +39,14 @@ The label policy is **transparent**, lives in `config.yaml`, and is **reproducib
 | SHAP explanation | 30–50 ms |
 | **Total (single app)** | **~50–80 ms p50** |
 
-Stays comfortably under a 200 ms SLA at the API edge. Batch endpoint is throughput-optimised — 5000-row batch in ~3 seconds.
+Stays comfortably under a 200 ms SLA at the API edge. Batch endpoint is throughput-optimised - 5000-row batch in ~3 seconds.
 
 ## Data leakage protection
 
 Three explicit barriers against leakage:
 
 1. **Application-time columns only.** The loader's `APPLICATION_TIME_COLUMNS` allow-list explicitly excludes every post-funding field (`recoveries`, `total_pymnt`, etc.).
-2. **Out-of-fold meta features.** The stacking ensemble builds the meta-learner's training matrix using K-fold OOF predictions — never with in-fold base-model predictions.
+2. **Out-of-fold meta features.** The stacking ensemble builds the meta-learner's training matrix using K-fold OOF predictions - never with in-fold base-model predictions.
 3. **Time-based split.** Default split strategy is chronological, not random. Train ends before val starts; val ends before test starts.
 
 ## Fairness scope

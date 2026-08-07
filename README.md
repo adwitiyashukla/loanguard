@@ -109,9 +109,9 @@ The dataset is **LendingClub's public loan data (2007–2018, ~2.2M loans)**, tr
 | Lift @ top 5% | **3.57x** | 2.86x | 2.86x | 0.71x | 0.71x | **3.57x** |
 | Lift @ top 10% | **3.93x** | 2.50x | 3.57x | 1.07x | 1.07x | 2.14x |
 
-**Class balance:** the test set has a 0.37% positive (fraud) rate — severely imbalanced, which caps theoretical PR-AUC and makes ROC-AUC > 0.70 hard to achieve on any single run.
+**Class balance:** the test set has a 0.37% positive (fraud) rate - severely imbalanced, which caps theoretical PR-AUC and makes ROC-AUC > 0.70 hard to achieve on any single run.
 
-**What the stacked ensemble buys us.** It matches the strongest base model's lift in the top 5% (3.57x — same fraud-catching efficiency for the ops review queue) while delivering **dramatically better calibration**: Brier 0.0038 vs XGBoost's 0.014, a ~3.7× improvement. Calibration matters because the final score is used directly in expected-loss calculations — a miscalibrated 0.10 vs 0.30 score implies very different dollar exposures. The ensemble also halves the log-loss (0.026 vs 0.064) and produces probability-meaningful scores via isotonic calibration, so the same score has the same downstream meaning across all decisions.
+**What the stacked ensemble buys us.** It matches the strongest base model's lift in the top 5% (3.57x - same fraud-catching efficiency for the ops review queue) while delivering **dramatically better calibration**: Brier 0.0038 vs XGBoost's 0.014, a ~3.7× improvement. Calibration matters because the final score is used directly in expected-loss calculations - a miscalibrated 0.10 vs 0.30 score implies very different dollar exposures. The ensemble also halves the log-loss (0.026 vs 0.064) and produces probability-meaningful scores via isotonic calibration, so the same score has the same downstream meaning across all decisions.
 
 **Cost-optimal operating point:** at the threshold of 0.51 selected by the cost-sensitive sweep ($1,200 modeled loss per missed fraud, $20 review cost per false alarm), expected net cost is **$4.48 per applicant**. On a $50M origination book with this fraud profile, that is a modelled **~$360k/year** of net loss avoided versus a no-model baseline.
 
@@ -130,7 +130,7 @@ The dataset is **LendingClub's public loan data (2007–2018, ~2.2M loans)**, tr
 loanguard/
 ├── config/                  YAML configs (model, features, paths)
 ├── data/                    Raw / processed / external data (gitignored)
-├── notebooks/               EDA, modeling, results — interview-ready narrative
+├── notebooks/               EDA, modeling, results - interview-ready narrative
 ├── src/
 │   ├── data/                Loaders, validators, label builder, splitter
 │   ├── features/            Behavioural, velocity, graph, WoE, text features

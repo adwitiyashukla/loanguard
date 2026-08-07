@@ -1,7 +1,7 @@
 """Behavioural features derived from application fields.
 
 These are the features that consistently move the needle in
-production fraud models — ratios, credit-history age, payment-to-
+production fraud models - ratios, credit-history age, payment-to-
 income, etc.
 """
 
@@ -16,7 +16,7 @@ def _safe_qcut(series: pd.Series, q: int = 10) -> pd.Series:
 
     ``pd.qcut`` raises when there aren't enough distinct values to form
     ``q`` bins (e.g. a single-row scoring request). We fall back to a
-    single bucket (0) in that case — the bucket is only used as a graph
+    single bucket (0) in that case - the bucket is only used as a graph
     link key, never as a direct model feature, so a constant value at
     inference time is harmless.
     """
@@ -29,7 +29,7 @@ def _safe_qcut(series: pd.Series, q: int = 10) -> pd.Series:
 
 
 def build_behavioral_features(df: pd.DataFrame, today: pd.Timestamp | None = None) -> pd.DataFrame:
-    """Add ~15 behavioural / derived features. Pure function — no side effects."""
+    """Add ~15 behavioural / derived features. Pure function - no side effects."""
     df = df.copy()
     today = today or df.get("issue_d", pd.Series([pd.Timestamp.today()])).max()
 

@@ -1,9 +1,9 @@
 """Streamlit risk analyst console.
 
 Three views:
-  1. Portfolio Overview  — fraud rate, score distribution, top features
-  2. Application Triage  — score a single application, see reason codes
-  3. Drift Monitor       — PSI per feature, training vs. production
+  1. Portfolio Overview  - fraud rate, score distribution, top features
+  2. Application Triage  - score a single application, see reason codes
+  3. Drift Monitor       - PSI per feature, training vs. production
 
 Run with:
     streamlit run src/dashboard/app.py
@@ -41,7 +41,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-st.title("LoanGuard — Risk Analyst Console")
+st.title("LoanGuard - Risk Analyst Console")
 st.caption("Real-time fraud risk for loan applications • powered by an XGBoost / LGBM / AE stack")
 
 
@@ -126,7 +126,7 @@ if view == "Portfolio Overview":
 elif view == "Application Triage":
     st.subheader("Score a single application")
     if not svc.is_ready:
-        st.error("Service is not loaded — train the model first.")
+        st.error("Service is not loaded - train the model first.")
         st.stop()
 
     with st.form("application_form", clear_on_submit=False):
@@ -192,7 +192,7 @@ elif view == "Application Triage":
             delta_color="off" if result.decision == "APPROVE" else "inverse",
         )
         c3.markdown(
-            f"**Thresholds** — review ≥ {result.threshold_review:.2f}, "
+            f"**Thresholds** - review ≥ {result.threshold_review:.2f}, "
             f"decline ≥ {result.threshold_decline:.2f}"
         )
 

@@ -1,4 +1,4 @@
-"""Isolation Forest — unsupervised anomaly scorer.
+"""Isolation Forest - unsupervised anomaly scorer.
 
 Used as an extra signal for the stacking ensemble. Particularly
 valuable on novel fraud patterns that the supervised models

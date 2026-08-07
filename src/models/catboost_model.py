@@ -1,4 +1,4 @@
-"""CatBoost fraud model — best out-of-the-box performance on categoricals."""
+"""CatBoost fraud model - best out-of-the-box performance on categoricals."""
 
 from __future__ import annotations
 

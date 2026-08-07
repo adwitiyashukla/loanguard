@@ -1,6 +1,6 @@
 """High-cardinality categorical encoders.
 
-WoE (Weight of Evidence) is the credit industry standard — it's
+WoE (Weight of Evidence) is the credit industry standard - it's
 monotonic, interpretable, and plays well with logistic regression
 and tree-based models alike. Target encoding with smoothing is
 a strong alternative for high-cardinality columns like emp_title.

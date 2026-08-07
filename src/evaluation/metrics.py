@@ -72,7 +72,7 @@ def psi(
     actual: np.ndarray | pd.Series,
     bins: int = 10,
 ) -> float:
-    """Population Stability Index — drift between two score distributions.
+    """Population Stability Index - drift between two score distributions.
 
     Rule of thumb: <0.1 stable, 0.1–0.25 some drift, >0.25 major drift.
     """

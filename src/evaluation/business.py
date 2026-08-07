@@ -15,9 +15,9 @@ import pandas as pd
 
 @dataclass
 class CostMatrix:
-    false_negative: float = 1_200.0  # missed fraud — average loss (USD)
+    false_negative: float = 1_200.0  # missed fraud - average loss (USD)
     false_positive: float = 20.0     # cost of manual review for a clean app (USD)
-    true_positive: float = 0.0       # caught fraud — model wins
+    true_positive: float = 0.0       # caught fraud - model wins
     true_negative: float = 0.0
 
 

@@ -24,7 +24,7 @@ def test_health():
 
 
 def test_score_returns_503_when_model_not_loaded():
-    """Without artifacts on disk, /score should return 503 — not 500."""
+    """Without artifacts on disk, /score should return 503 - not 500."""
     payload = {
         "loan_amnt": 10000,
         "term": 36,

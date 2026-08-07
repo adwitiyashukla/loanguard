@@ -3,7 +3,7 @@
 Builds an applicant similarity graph where edges connect applicants
 sharing key identifiers (zip, employer, income bucket). The
 community-level fraud rate and degree centrality of each node are
-strong fraud signals — they catch organised rings that any single
+strong fraud signals - they catch organised rings that any single
 feature would miss.
 
 For very large datasets the graph would be built with GraphTool or
@@ -52,7 +52,7 @@ def build_graph_features(
         groups = df.groupby(key, observed=True).indices
         for value, idxs in groups.items():
             if pd.isna(value) or len(idxs) < 2 or len(idxs) > 200:
-                # ignore huge groups (e.g. NaN zip) — they're too generic
+                # ignore huge groups (e.g. NaN zip) - they're too generic
                 continue
             for i in range(len(idxs)):
                 for j in range(i + 1, len(idxs)):

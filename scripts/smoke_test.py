@@ -157,7 +157,7 @@ def main() -> None:
             ens2 = load_joblib(tmp_path / "model_ensemble.joblib")
             import numpy as np
 
-            # (a) Builder roundtrip — re-loaded builder transforms the SAME
+            # (a) Builder roundtrip - re-loaded builder transforms the SAME
             #     full raw frame to identical features (velocity/graph are
             #     batch-context dependent, so we must transform the same input).
             Xb1 = builder.transform(X_test_raw)
@@ -166,7 +166,7 @@ def main() -> None:
                 "Re-loaded FeatureBuilder produces different features"
             )
 
-            # (b) Model roundtrip — re-loaded ensemble scores identically on
+            # (b) Model roundtrip - re-loaded ensemble scores identically on
             #     identical features.
             p1 = ens.predict_proba(X_test)
             p2 = ens2.predict_proba(X_test)
@@ -206,7 +206,7 @@ def main() -> None:
     except Exception as e:
         fail("Serialization or scoring service broke", e)
 
-    print("\n✅ ALL SMOKE CHECKS PASSED — safe to commit.\n")
+    print("\n✅ ALL SMOKE CHECKS PASSED - safe to commit.\n")
 
 
 if __name__ == "__main__":
