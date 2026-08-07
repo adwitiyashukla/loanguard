@@ -1,0 +1,40 @@
+name: HuggingFace Space Health Check
+
+# Pings the deployed Space every 6 hours to make sure it's still healthy.
+# GitHub sends an automatic email if the workflow fails, so if the Space
+# is ever down (e.g. HuggingFace scheduling failure) you'll know within
+# hours instead of finding out because a recruiter tells you.
+#
+# Cost: ~30 seconds per run × 4 runs/day × 30 days = ~60 minutes/month
+# of GitHub Actions time — well under the free tier's 2000 min/month.
+
+on:
+  schedule:
+    # Every 6 hours at minute 0 (00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: "0 */6 * * *"
+  # Also lets you trigger a manual check from the Actions tab any time.
+  workflow_dispatch:
+
+jobs:
+  ping-space:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check HuggingFace Space status
+        run: |
+          SPACE_URL="https://huggingface.co/api/spaces/adwitiyashukla/loanguard"
+          echo "Checking $SPACE_URL"
+
+          # Ask the HF API for the current runtime status
+          STATUS=$(curl -sS "$SPACE_URL" | grep -oE '"stage":"[^"]+"' | head -1)
+          echo "Reported status: $STATUS"
+
+          # "RUNNING" is the only healthy state. Anything else (RUNTIME_ERROR,
+          # BUILD_ERROR, NO_APP_FILE, SLEEPING, PAUSED) counts as unhealthy.
+          if echo "$STATUS" | grep -q "RUNNING"; then
+            echo "✅ Space is Running — all good."
+            exit 0
+          else
+            echo "❌ Space is not Running. Investigation needed."
+            echo "Visit: https://huggingface.co/spaces/adwitiyashukla/loanguard"
+            exit 1
+          fi
