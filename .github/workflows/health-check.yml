@@ -1,40 +1,68 @@
-name: HuggingFace Space Health Check
+name: HuggingFace Space Keep-Alive + Health Check
 
-# Pings the deployed Space every 6 hours to make sure it's still healthy.
-# GitHub sends an automatic email if the workflow fails, so if the Space
-# is ever down (e.g. HuggingFace scheduling failure) you'll know within
-# hours instead of finding out because a recruiter tells you.
+# Runs every 6 hours. Two things happen on each run:
 #
-# Cost: ~30 seconds per run × 4 runs/day × 30 days = ~60 minutes/month
-# of GitHub Actions time - well under the free tier's 2000 min/month.
+# 1. KEEP-ALIVE: hits the Space's live URL. Each HTTP request counts as
+#    a visit and resets HuggingFace's 48h auto-sleep timer, so the Space
+#    stays warm indefinitely.
+#
+# 2. HEALTH CHECK: after the ping, checks the HuggingFace API for the
+#    Space's status. Alerts (via a failing workflow run + auto email)
+#    only on real error states (RUNTIME_ERROR, BUILD_ERROR, etc.).
+#    Transient states (BUILDING, STARTING) that happen right after a
+#    commit are treated as healthy so you don't get false alarms.
 
 on:
   schedule:
     # Every 6 hours at minute 0 (00:00, 06:00, 12:00, 18:00 UTC)
     - cron: "0 */6 * * *"
-  # Also lets you trigger a manual check from the Actions tab any time.
   workflow_dispatch:
 
 jobs:
-  ping-space:
+  ping-and-check:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: Check HuggingFace Space status
+      - name: Keep-alive ping (wakes Space if sleeping, resets sleep timer)
         run: |
-          SPACE_URL="https://huggingface.co/api/spaces/adwitiyashukla/loanguard"
-          echo "Checking $SPACE_URL"
+          SPACE_URL="https://adwitiyashukla-loanguard.hf.space"
+          echo "Pinging $SPACE_URL to keep it warm"
 
-          # Ask the HF API for the current runtime status
-          STATUS=$(curl -sS "$SPACE_URL" | grep -oE '"stage":"[^"]+"' | head -1)
-          echo "Reported status: $STATUS"
+          # Follow redirects, print HTTP status, ignore body. 30s timeout.
+          HTTP_CODE=$(curl -sSL -o /dev/null -w "%{http_code}" \
+            --max-time 30 "$SPACE_URL" || echo "000")
 
-          # "RUNNING" is the only healthy state. Anything else (RUNTIME_ERROR,
-          # BUILD_ERROR, NO_APP_FILE, SLEEPING, PAUSED) counts as unhealthy.
-          if echo "$STATUS" | grep -q "RUNNING"; then
-            echo "✅ Space is Running - all good."
-            exit 0
+          echo "HTTP status from Space URL: $HTTP_CODE"
+
+          # 2xx / 3xx = healthy. 4xx sometimes means "waking up" so we accept.
+          # 5xx = server error, complete failure = unreachable.
+          if [ "$HTTP_CODE" = "000" ] || [ "$HTTP_CODE" -ge 500 ]; then
+            echo "Space URL unreachable or 5xx - will confirm via API below."
           else
-            echo "❌ Space is not Running. Investigation needed."
-            echo "Visit: https://huggingface.co/spaces/adwitiyashukla/loanguard"
-            exit 1
+            echo "Space URL responded OK (visit counted, sleep timer reset)."
           fi
+
+      - name: Confirm Space stage via HuggingFace API
+        run: |
+          API_URL="https://huggingface.co/api/spaces/adwitiyashukla/loanguard"
+          STAGE=$(curl -sS "$API_URL" | grep -oE '"stage":"[^"]+"' | head -1)
+          echo "Reported stage: $STAGE"
+
+          # Only fail on states that genuinely need manual attention.
+          # Transient states (BUILDING, STARTING, APP_STARTING) are OK -
+          # they resolve on their own within a few minutes.
+          case "$STAGE" in
+            *RUNTIME_ERROR*|*BUILD_ERROR*|*NO_APP_FILE*|*PAUSED*|*DELETING*|*CONFIG_ERROR*)
+              echo "Space is in a broken state that needs manual attention."
+              echo "Visit: https://huggingface.co/spaces/adwitiyashukla/loanguard"
+              exit 1
+              ;;
+            *RUNNING*|*BUILDING*|*STARTING*|*SLEEPING*|*APP_STARTING*)
+              echo "Space stage is acceptable (running or transient)."
+              exit 0
+              ;;
+            *)
+              echo "Unknown stage - not failing, but worth checking manually."
+              exit 0
+              ;;
+          esac
