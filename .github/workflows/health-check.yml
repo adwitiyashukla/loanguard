@@ -1,20 +1,7 @@
 name: HuggingFace Space Keep-Alive + Health Check
 
-# Runs every 6 hours. Two things happen on each run:
-#
-# 1. KEEP-ALIVE: hits the Space's live URL. Each HTTP request counts as
-#    a visit and resets HuggingFace's 48h auto-sleep timer, so the Space
-#    stays warm indefinitely.
-#
-# 2. HEALTH CHECK: after the ping, checks the HuggingFace API for the
-#    Space's status. Alerts (via a failing workflow run + auto email)
-#    only on real error states (RUNTIME_ERROR, BUILD_ERROR, etc.).
-#    Transient states (BUILDING, STARTING) that happen right after a
-#    commit are treated as healthy so you don't get false alarms.
-
 on:
   schedule:
-    # Every 6 hours at minute 0 (00:00, 06:00, 12:00, 18:00 UTC)
     - cron: "0 */6 * * *"
   workflow_dispatch:
 
@@ -28,14 +15,11 @@ jobs:
           SPACE_URL="https://adwitiyashukla-loanguard.hf.space"
           echo "Pinging $SPACE_URL to keep it warm"
 
-          # Follow redirects, print HTTP status, ignore body. 30s timeout.
           HTTP_CODE=$(curl -sSL -o /dev/null -w "%{http_code}" \
             --max-time 30 "$SPACE_URL" || echo "000")
 
           echo "HTTP status from Space URL: $HTTP_CODE"
 
-          # 2xx / 3xx = healthy. 4xx sometimes means "waking up" so we accept.
-          # 5xx = server error, complete failure = unreachable.
           if [ "$HTTP_CODE" = "000" ] || [ "$HTTP_CODE" -ge 500 ]; then
             echo "Space URL unreachable or 5xx - will confirm via API below."
           else
@@ -48,9 +32,6 @@ jobs:
           STAGE=$(curl -sS "$API_URL" | grep -oE '"stage":"[^"]+"' | head -1)
           echo "Reported stage: $STAGE"
 
-          # Only fail on states that genuinely need manual attention.
-          # Transient states (BUILDING, STARTING, APP_STARTING) are OK -
-          # they resolve on their own within a few minutes.
           case "$STAGE" in
             *RUNTIME_ERROR*|*BUILD_ERROR*|*NO_APP_FILE*|*PAUSED*|*DELETING*|*CONFIG_ERROR*)
               echo "Space is in a broken state that needs manual attention."

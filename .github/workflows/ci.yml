@@ -1,9 +1,5 @@
 name: CI
 
-# Runs on every push/PR to main. Two lightweight jobs that verify the
-# project actually works end-to-end - they don't enforce strict style
-# rules (that's what pre-commit is for locally).
-
 on:
   push:
     branches: [main]
@@ -32,7 +28,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install -r requirements-dev.txt
+          pip install pytest httpx
 
       - name: End-to-end smoke test (synthetic data)
         run: python scripts/smoke_test.py

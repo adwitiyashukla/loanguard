@@ -1,4 +1,3 @@
-# Byte-compiled / cache
 __pycache__/
 *.py[cod]
 *$py.class
@@ -11,18 +10,15 @@ __pycache__/
 htmlcov/
 .tox/
 
-# Distribution / packaging
 build/
 dist/
 *.egg-info/
 *.egg
 
-# Virtual env
 .venv/
 venv/
 env/
 
-# Data — never commit
 data/raw/*
 data/processed/*
 data/external/*
@@ -30,32 +26,22 @@ data/external/*
 !data/processed/.gitkeep
 !data/external/.gitkeep
 
-# Models and artifacts
-# NOTE: we DO commit artifacts/ so HuggingFace Spaces (and anyone who
-# clones the repo) can load the trained model without re-running training.
-# Comment the next two lines back in if you want to keep artifacts local-only.
-# artifacts/
-# *.joblib
 mlruns/
 mlartifacts/
 *.pkl
 *.pt
 *.onnx
 
-# Logs
 logs/
 *.log
 
-# IDEs / OS
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
 *.swp
 
-# Jupyter
 .ipynb_checkpoints/
 
-# Env files
 .env
 .env.local
