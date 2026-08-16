@@ -52,8 +52,7 @@ src/
   dashboard/    Streamlit risk console
   monitoring/   drift monitor
   utils/        config, logging, IO
-scripts/        download_data, train, score, smoke_test
-tests/          pytest suite
+scripts/        download_data, train
 config/         config.yaml
 artifacts/      trained models (Git LFS)
 ```
@@ -68,10 +67,9 @@ python -m venv .venv
 pip install -r requirements.txt
 python scripts/download_data.py
 python scripts/train.py --config config/config.yaml
-uvicorn src.api.main:app --port 8000
 streamlit run app.py
 ```
 
-## Deploy (HuggingFace Space)
+## Deploy
 
-The repo doubles as a Docker Space. Push to `huggingface.co/spaces/adwitiyashukla/loanguard` and HF rebuilds automatically.
+The repo doubles as a Docker Space on HuggingFace. Push to `huggingface.co/spaces/adwitiyashukla/loanguard` and the Space rebuilds automatically.
